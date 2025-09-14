@@ -3,8 +3,8 @@ pub trait ICounter<T> {
     fn get_counter(self: @T) -> u32;
     fn increase_counter(ref self: T);
     fn decrease_counter(ref self: T);
-    fn set_counter(ref self: T, new_Value: u32);
-    fn reset_counter(ref sef: T);
+    fn set_counter(ref self: T, new_value: u32);
+    fn reset_counter(ref self: T);
 }
 
 #[starknet::contract]
@@ -71,7 +71,7 @@ Set
 
         fn increase_counter(ref self: ContractState) {
             let current_counter = self.counter.read();
-            let new_counter = current_Counter + 1;
+            let new_counter = current_counter + 1;
             self.counter.write(new_counter);
 
             let event: CounterChanged = CounterChanged {
@@ -81,7 +81,7 @@ Set
                 reason: ChangeReason::Increase,
             };
 
-            self.emit(event);
+            self.emit(event)
 
         }
 
@@ -96,21 +96,21 @@ Set
                 new_value: new_counter,
                 caller: get_caller_address(),
                 reason: ChangeReason::Decrease
-            }
+            };
 
             self.emit(event)
         }
 
-        fn set_counter(ref self: ContractState, new_Value: u32) {
+        fn set_counter(ref self: ContractState, new_value: u32) {
             self.ownable.assert_only_owner();
             let current_counter = self.counter.read();
             self.counter.write(new_value);
             let event: CounterChanged = CounterChanged {
                 old_value: current_counter,
-                new_value: new_counter,
+                new_value: new_value,
                 caller: get_caller_address(),
                 reason: ChangeReason::Set
-            }
+            };
 
             self.emit(event)
         }
@@ -120,7 +120,7 @@ Set
             let strk_token: ContractAddress = strk_address();
             let caller = get_caller_address();
             let contract = get_contract_address();
-            let dispatcher = IERC20Dispatcher{contract_address: strk_token}
+            let dispatcher = IERC20Dispatcher{contract_address: strk_token};
 
             let balance = dispatcher.balance_of(caller);
             assert!(balance >= payment_amount, "User does not have enough balance");
@@ -136,11 +136,11 @@ Set
             self.counter.write(0);
 
             let event: CounterChanged = CounterChanged {
-                old_value = current_Counter,
-                new_Value = 0,
+                old_value: current_counter,
+                new_value: 0,
                 caller: caller,
                 reason: ChangeReason::Reset,
-            }
+            };
             self.emit(event)
         }
         

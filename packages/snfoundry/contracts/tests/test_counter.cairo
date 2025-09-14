@@ -1,10 +1,10 @@
 use contracts::counter::ICounterDispatcherTrait;
 use starknet::ContractAddress;
-use snforge_std::{declare, ContractClassTrait, DeclareResultTrait, spy_events, start_cheat_caller_address, stop_cheat_caller_address, set_balance, Token};
+use snforge_std::{declare, ContractClassTrait, DeclareResultTrait, EventSpyAssertionsTrait, spy_events, start_cheat_caller_address, stop_cheat_caller_address, set_balance, Token};
 use contracts::counter::{ICounterDispatcher};
 use contracts::counter::CounterContract::{CounterChanged, ChangeReason, Event};
 use contracts::utils::{strk_address, strk_to_fri};
-use openzeppelin_token::erc20::interface::{IERC20Dispatcher, IERC20DispatcherTrait}
+use openzeppelin_token::erc20::interface::{IERC20Dispatcher, IERC20DispatcherTrait};
 
 fn owner_address() -> ContractAddress {
 "owner".try_into().unwrap()
@@ -17,9 +17,9 @@ fn user_address() -> ContractAddress {
 fn deploy_counter(init_counter: u32) -> ICounterDispatcher {
     let owner_address: ContractAddress = owner_address();
 
-    let contract = declare{"CounterContract"}.unwrap()contract_class();   
-    
-    let mut constructor_args = array![];
+    let contract = declare("CounterContract").unwrap().contract_class();   
+
+    let mut constructor_args: Array<felt252> = array![];
     init_counter.serialize(ref constructor_args);
     owner_address.serialize(ref constructor_args);
 
